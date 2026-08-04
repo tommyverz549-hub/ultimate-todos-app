@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Windows XP Task Manager - Daily To-Dos</title>
+  <style>
+    :root {
+      --xp-blue: #0055ea;
+      --xp-header-grad: linear-gradient(180deg, #0058ee 0%, #3593ff 4%, #288eff 6%, #0055ea 10%, #0055ea 90%, #0046b8 100%);
+      --xp-bg: #ece9d8;
+      --xp-border: #003c74;
+      --xp-button-grad: linear-gradient(180deg, #ffffff 0%, #ece9d8 86%, #dfdac6 100%);
+      --xp-button-hover: linear-gradient(180deg, #fff7dc 0%, #ffe194 86%, #ffc83b 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Tahoma", "Segoe UI", sans-serif;
+      font-size: 12px; /* Increased slightly for better legibility */
+    }
+
+    body {
+      background-color: #5a7edc;
+      background-image: radial-gradient(circle at center, #7a9ee8 0%, #3b60bd 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* XP Window Outer Frame - EXPANDED SIZE */
+    .xp-window {
+      width: 100%;
+      max-width: 720px; /* Expanded width from 520px to 720px */
+      background-color: var(--xp-bg);
+      border: 3px solid var(--xp-border);
+      border-radius: 8px 8px 0 0;
+      box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+    }
+
+    /* XP Title Bar */
+    .xp-title-bar {
+      background: var(--xp-header-grad);
+      color: white;
+      padding: 6px 10px;
+      font-weight: bold;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
+    }
+
+    .xp-title-controls button {
+      width: 18px;
+      height: 16px;
+      font-size: 10px;
+      line-height: 10px;
+      padding: 0;
+      margin-left: 3px;
+      background: #d84a38;
+      color: white;
+      border: 1px solid #fff;
+      border-radius: 2px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .xp-body {
+      padding: 18px; /* Increased inner spacing */
+    }
+
+    /* Controls Panel */
+    .fieldset-box {
+      border: 1px solid #d0ccb8;
+      border-radius: 4px;
+      padding: 10px 14px 14px;
+      margin-bottom: 16px;
+      background: #f4f2e8;
+    }
+
+    .fieldset-box legend {
+      color: #00156e;
+      font-weight: bold;
+      font-size: 12px;
+      padding: 0 6px;
+    }
+
+    .date-picker-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    input[type="date"], input[type="text"] {
+      border: 2px inset #d0ccb8;
+      padding: 6px 8px; /* Roomier inputs */
+      background: white;
+      outline: none;
+      font-size: 12px;
+    }
+
+    input[type="date"]:focus, input[type="text"]:focus {
+      border: 2px inset #7f9db9;
+    }
+
+    .add-task-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .add-task-row input[type="text"] {
+      flex: 1;
+    }
+
+    /* XP Buttons */
+    .xp-btn {
+      background: var(--xp-button-grad);
+      border: 1px solid #003c74;
+      border-radius: 3px;
+      padding: 6px 16px; /* Bigger buttons */
+      font-size: 12px;
+      cursor: pointer;
+      color: #000;
+      box-shadow: inset 1px 1px 0px #fff;
+    }
+
+    .xp-btn:hover {
+      background: var(--xp-button-hover);
+    }
+
+    .xp-btn:active {
+      background: #e0ded0;
+      box-shadow: inset -1px -1px 0px #fff;
+    }
+
+    /* Tasks List - EXPANDED HEIGHT */
+    .task-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      height: 350px; /* Increased height from 250px max to 350px fixed block */
+      overflow-y: auto;
+      background: white;
+      border: 2px inset #7f9db9;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-bottom: 1px solid #efefef;
+      font-size: 12px;
+    }
+
+    .task-item:nth-child(even) {
+      background-color: #f9f9f7;
+    }
+
+    .task-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      word-break: break-word;
+    }
+
+    .task-item.completed span {
+      text-decoration: line-through;
+      color: #888;
+    }
+
+    .btn-delete {
+      background: #e0a0a0;
+      border: 1px solid #a03030;
+      color: black;
+      padding: 2px 8px;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    .btn-delete:hover {
+      background: #f07070;
+      color: white;
+    }
+
+    .empty-state {
+      padding: 30px;
+      text-align: center;
+      color: #777;
+      font-style: italic;
+    }
+
+    /* Footer Backup/Restore Bar */
+    .xp-footer {
+      border-top: 1px solid #d0ccb8;
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    #fileInput {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="xp-window">
+    <!-- Title Bar -->
+    <div class="xp-title-bar">
+      <span>Daily Tasks - Windows XP Edition</span>
+      <div class="xp-title-controls">
+        <button title="Close" onclick="alert('Use the backup buttons below to save your data!')">X</button>
+      </div>
+    </div>
+
+    <div class="xp-body">
+      <!-- Date Selection & Input Panel -->
+      <fieldset class="fieldset-box">
+        <legend>Date Selection</legend>
+        <div class="date-picker-row">
+          <label for="taskDate">Select Day:</label>
+          <input type="date" id="taskDate" />
+          <button class="xp-btn" id="todayBtn">Today</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="fieldset-box">
+        <legend>Add New Task</legend>
+        <div class="add-task-row">
+          <input type="text" id="taskInput" placeholder="Type a task here..." />
+          <button class="xp-btn" id="addTaskBtn">Add Task</button>
+        </div>
+      </fieldset>
+
+      <!-- Task List Area -->
+      <fieldset class="fieldset-box">
+        <legend id="listLegend">Tasks</legend>
+        <ul class="task-list" id="taskList">
+          <!-- Tasks dynamically rendered here -->
+        </ul>
+      </fieldset>
+
+      <!-- Backup / Restore Footer -->
+      <div class="xp-footer">
+        <button class="xp-btn" id="backupBtn">💾 Create Backup (.txt)</button>
+        <button class="xp-btn" id="restoreBtn">📂 Load Backup (.txt)</button>
+        <input type="file" id="fileInput" accept=".txt" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "xp_todos_db";
+
+    // DOM Elements
+    const taskDateInput = document.getElementById("taskDate");
+    const todayBtn = document.getElementById("todayBtn");
+    const taskInput = document.getElementById("taskInput");
+    const addTaskBtn = document.getElementById("addTaskBtn");
+    const taskList = document.getElementById("taskList");
+    const listLegend = document.getElementById("listLegend");
+    const backupBtn = document.getElementById("backupBtn");
+    const restoreBtn = document.getElementById("restoreBtn");
+    const fileInput = document.getElementById("fileInput");
+
+    let db = {};
+
+    function init() {
+      loadDB();
+      setToday();
+      
+      taskDateInput.addEventListener("change", renderTasks);
+      todayBtn.addEventListener("click", () => { setToday(); renderTasks(); });
+      addTaskBtn.addEventListener("click", addTask);
+      taskInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") addTask();
+      });
+
+      backupBtn.addEventListener("click", exportBackup);
+      restoreBtn.addEventListener("click", () => fileInput.click());
+      fileInput.addEventListener("change", importBackup);
+    }
+
+    function setToday() {
+      const today = new Date().toISOString().split("T")[0];
+      taskDateInput.value = today;
+      renderTasks();
+    }
+
+    function loadDB() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        try {
+          db = JSON.parse(data);
+        } catch (e) {
+          db = {};
+        }
+      }
+    }
+
+    function saveDB() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    }
+
+    function renderTasks() {
+      const selectedDate = taskDateInput.value;
+      listLegend.innerText = `Tasks for ${selectedDate || "Selected Day"}`;
+      taskList.innerHTML = "";
+
+      if (!selectedDate) {
+        taskList.innerHTML = `<li class="empty-state">Please select a valid date.</li>`;
+        return;
+      }
+
+      const tasks = db[selectedDate] || [];
+
+      if (tasks.length === 0) {
+        taskList.innerHTML = `<li class="empty-state">No tasks recorded for this day.</li>`;
+        return;
+      }
+
+      tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        li.className = `task-item ${task.completed ? "completed" : ""}`;
+
+        const leftDiv = document.createElement("div");
+        leftDiv.className = "task-left";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = task.completed;
+        checkbox.addEventListener("change", () => toggleTask(selectedDate, index));
+
+        const span = document.createElement("span");
+        span.textContent = task.text;
+
+        leftDiv.appendChild(checkbox);
+        leftDiv.appendChild(span);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "btn-delete";
+        deleteBtn.innerHTML = "&times;";
+        deleteBtn.title = "Delete Task";
+        deleteBtn.addEventListener("click", () => deleteTask(selectedDate, index));
+
+        li.appendChild(leftDiv);
+        li.appendChild(deleteBtn);
+        taskList.appendChild(li);
+      });
+    }
+
+    function addTask() {
+      const selectedDate = taskDateInput.value;
+      const text = taskInput.value.trim();
+
+      if (!selectedDate) {
+        alert("Please pick a date first!");
+        return;
+      }
+
+      if (!text) return;
+
+      if (!db[selectedDate]) {
+        db[selectedDate] = [];
+      }
+
+      db[selectedDate].push({
+        id: Date.now(),
+        text: text,
+        completed: false
+      });
+
+      saveDB();
+      taskInput.value = "";
+      renderTasks();
+    }
+
+    function toggleTask(date, index) {
+      if (db[date] && db[date][index]) {
+        db[date][index].completed = !db[date][index].completed;
+        saveDB();
+        renderTasks();
+      }
+    }
+
+    function deleteTask(date, index) {
+      if (db[date]) {
+        db[date].splice(index, 1);
+        if (db[date].length === 0) {
+          delete db[date];
+        }
+        saveDB();
+        renderTasks();
+      }
+    }
+
+    function exportBackup() {
+      const dataStr = JSON.stringify(db, null, 2);
+      const blob = new Blob([dataStr], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `todo-backup-${new Date().toISOString().split("T")[0]}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function importBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          if (typeof importedData === "object" && importedData !== null) {
+            db = importedData;
+            saveDB();
+            renderTasks();
+            alert("Backup successfully loaded into Local Storage!");
+          } else {
+            throw new Error("Invalid format");
+          }
+        } catch (err) {
+          alert("Error loading file: Please ensure it is a valid backup .txt file.");
+        }
+      };
+      reader.readAsText(file);
+      fileInput.value = "";
+    }
+
+    init();
+  </script>
+</body>
+</html>
