@@ -1,28 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Windows XP Task Manager - Daily To-Dos</title>
+  <title>Daily To-Dos</title>
   <style>
-    :root {
-      --xp-blue: #0055ea;
-      --xp-header-grad: linear-gradient(180deg, #0058ee 0%, #3593ff 4%, #288eff 6%, #0055ea 10%, #0055ea 90%, #0046b8 100%);
-      --xp-bg: #ece9d8;
-      --xp-border: #003c74;
-      --xp-button-grad: linear-gradient(180deg, #ffffff 0%, #ece9d8 86%, #dfdac6 100%);
-      --xp-button-hover: linear-gradient(180deg, #fff7dc 0%, #ffe194 86%, #ffc83b 100%);
+    :root[data-theme="dark"] {
+      --bg-color: #121212;
+      --surface-color: #1a1a1a;
+      --surface-border: #333333;
+      --text-main: #f3f3f3;
+      --text-muted: #9e9e9e;
+      --accent: #d4af37; /* Brass/Craft Gold accent */
+      --accent-hover: #e6c547;
+      --input-bg: #161616;
+      --item-bg: #1a1a1a;
+      --item-alt-bg: #1e1e1e;
+      --danger-bg: #3a1c1c;
+      --danger-color: #ff6b6b;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    :root[data-theme="light"] {
+      --bg-color: #f7f5f0; /* Warm artisan paper tone */
+      --surface-color: #ffffff;
+      --surface-border: #e0dcd0;
+      --text-main: #1a1a1a;
+      --text-muted: #737373;
+      --accent: #b89728;
+      --accent-hover: #a18220;
+      --input-bg: #faf8f5;
+      --item-bg: #ffffff;
+      --item-alt-bg: #faf8f5;
+      --danger-bg: #fde8e8;
+      --danger-color: #d32f2f;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     }
 
     * {
       box-sizing: border-box;
-      font-family: "Tahoma", "Segoe UI", sans-serif;
-      font-size: 12px; /* Increased slightly for better legibility */
+      font-family: "Courier New", Courier, monospace, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 15px; /* Increased baseline font size */
+      letter-spacing: 0.5px;
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
     }
 
     body {
-      background-color: #5a7edc;
-      background-image: radial-gradient(circle at center, #7a9ee8 0%, #3b60bd 100%);
+      background-color: var(--bg-color);
+      color: var(--text-main);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -31,183 +56,269 @@
       padding: 20px;
     }
 
-    /* XP Window Outer Frame - EXPANDED SIZE */
     .xp-window {
       width: 100%;
-      max-width: 720px; /* Expanded width from 520px to 720px */
-      background-color: var(--xp-bg);
-      border: 3px solid var(--xp-border);
-      border-radius: 8px 8px 0 0;
-      box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.4);
+      max-width: 760px;
+      background-color: var(--surface-color);
+      border: 2px solid var(--surface-border);
+      border-radius: 0px; /* Sharp corners */
+      box-shadow: var(--shadow);
       overflow: hidden;
     }
 
-    /* XP Title Bar */
     .xp-title-bar {
-      background: var(--xp-header-grad);
-      color: white;
-      padding: 6px 10px;
-      font-weight: bold;
-      font-size: 13px;
+      background-color: var(--surface-color);
+      border-bottom: 2px solid var(--surface-border);
+      color: var(--text-main);
+      padding: 18px 24px;
+      font-weight: 700;
+      font-size: 16px; /* Increased font size */
+      text-transform: uppercase;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
     }
 
-    .xp-title-controls button {
-      width: 18px;
-      height: 16px;
-      font-size: 10px;
-      line-height: 10px;
-      padding: 0;
-      margin-left: 3px;
-      background: #d84a38;
-      color: white;
-      border: 1px solid #fff;
-      border-radius: 2px;
+    .xp-title-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--surface-border);
+      color: var(--text-main);
+      border-radius: 0px; /* Sharp corners */
+      padding: 6px 12px;
       cursor: pointer;
-      font-weight: bold;
+      font-size: 13px; /* Increased font size */
+      text-transform: uppercase;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .xp-title-controls button:not(.theme-toggle) {
+      width: 30px;
+      height: 30px;
+      font-size: 14px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--surface-border);
+      border-radius: 0px; /* Sharp corners */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .xp-title-controls button:not(.theme-toggle):hover {
+      background: var(--danger-color);
+      color: white;
+      border-color: var(--danger-color);
     }
 
     .xp-body {
-      padding: 18px; /* Increased inner spacing */
+      padding: 28px;
     }
 
-    /* Controls Panel */
     .fieldset-box {
-      border: 1px solid #d0ccb8;
-      border-radius: 4px;
-      padding: 10px 14px 14px;
-      margin-bottom: 16px;
-      background: #f4f2e8;
+      border: 1px solid var(--surface-border);
+      border-radius: 0px; /* Sharp corners */
+      padding: 18px;
+      margin-bottom: 24px;
+      background: transparent;
     }
 
     .fieldset-box legend {
-      color: #00156e;
-      font-weight: bold;
-      font-size: 12px;
-      padding: 0 6px;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 13px; /* Increased font size */
+      text-transform: uppercase;
+      padding: 0 8px;
     }
 
     .date-picker-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     label {
-      font-weight: bold;
-      color: #333;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 13px; /* Increased font size */
     }
 
     input[type="date"], input[type="text"] {
-      border: 2px inset #d0ccb8;
-      padding: 6px 8px; /* Roomier inputs */
-      background: white;
+      border: 1px solid var(--surface-border);
+      padding: 12px 14px;
+      border-radius: 0px; /* Sharp corners */
+      background: var(--input-bg);
+      color: var(--text-main);
       outline: none;
-      font-size: 12px;
+      font-size: 15px; /* Increased font size */
     }
 
     input[type="date"]:focus, input[type="text"]:focus {
-      border: 2px inset #7f9db9;
+      border-color: var(--accent);
     }
 
     .add-task-row {
       display: flex;
-      gap: 8px;
-      margin-top: 4px;
+      gap: 12px;
     }
 
     .add-task-row input[type="text"] {
       flex: 1;
     }
 
-    /* XP Buttons */
     .xp-btn {
-      background: var(--xp-button-grad);
-      border: 1px solid #003c74;
-      border-radius: 3px;
-      padding: 6px 16px; /* Bigger buttons */
-      font-size: 12px;
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 0px; /* Sharp corners */
+      padding: 12px 20px;
+      font-size: 14px; /* Increased font size */
+      font-weight: 700;
+      text-transform: uppercase;
       cursor: pointer;
-      color: #000;
-      box-shadow: inset 1px 1px 0px #fff;
+      color: #121212;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     .xp-btn:hover {
-      background: var(--xp-button-hover);
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
     }
 
-    .xp-btn:active {
-      background: #e0ded0;
-      box-shadow: inset -1px -1px 0px #fff;
-    }
-
-    /* Tasks List - EXPANDED HEIGHT */
     .task-list {
       list-style: none;
       padding: 0;
       margin: 0;
-      height: 350px; /* Increased height from 250px max to 350px fixed block */
+      height: 350px;
       overflow-y: auto;
-      background: white;
-      border: 2px inset #7f9db9;
+      background: transparent;
+      border: none;
     }
 
     .task-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 12px;
-      border-bottom: 1px solid #efefef;
-      font-size: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--surface-border);
+      border-radius: 0px; /* Sharp corners */
+      margin-bottom: 10px;
+      background-color: var(--item-bg);
+      font-size: 15px; /* Increased font size */
     }
 
     .task-item:nth-child(even) {
-      background-color: #f9f9f7;
+      background-color: var(--item-alt-bg);
     }
 
     .task-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 14px;
+      flex: 1;
+      margin-right: 12px;
       word-break: break-word;
     }
 
-    .task-item.completed span {
+    .task-left input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      border-radius: 0px;
+    }
+
+    .task-text {
+      cursor: pointer;
+      padding: 2px 6px;
+      border: 1px dashed transparent;
+    }
+
+    .task-text:hover {
+      border-color: var(--accent);
+      background: var(--input-bg);
+    }
+
+    .task-edit-input {
+      flex: 1;
+      font-size: 15px;
+      padding: 6px 10px;
+      border: 1px solid var(--accent);
+      background: var(--input-bg);
+      color: var(--text-main);
+      outline: none;
+      border-radius: 0px;
+    }
+
+    .task-item.completed .task-text {
       text-decoration: line-through;
-      color: #888;
+      color: var(--text-muted);
+      opacity: 0.7;
     }
 
     .btn-delete {
-      background: #e0a0a0;
-      border: 1px solid #a03030;
-      color: black;
-      padding: 2px 8px;
-      border-radius: 2px;
+      background: var(--danger-bg);
+      border: 1px solid var(--surface-border);
+      color: var(--danger-color);
+      width: 30px;
+      height: 30px;
+      border-radius: 0px; /* Sharp corners */
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
     }
 
     .btn-delete:hover {
-      background: #f07070;
+      background: var(--danger-color);
       color: white;
+      border-color: var(--danger-color);
     }
 
     .empty-state {
-      padding: 30px;
+      padding: 50px 20px;
       text-align: center;
-      color: #777;
+      color: var(--text-muted);
       font-style: italic;
+      font-size: 14px;
     }
 
-    /* Footer Backup/Restore Bar */
     .xp-footer {
-      border-top: 1px solid #d0ccb8;
-      padding-top: 14px;
+      border-top: 1px solid var(--surface-border);
+      padding-top: 20px;
       display: flex;
-      justify-content: space-between;
-      gap: 10px;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .xp-footer .xp-btn {
+      background: transparent;
+      border: 1px solid var(--surface-border);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .xp-footer .xp-btn:hover {
+      background: var(--surface-border);
+      color: var(--accent);
     }
 
     #fileInput {
@@ -220,34 +331,34 @@
   <div class="xp-window">
     <!-- Title Bar -->
     <div class="xp-title-bar">
-      <span>Daily Tasks - Windows XP Edition</span>
+      <span>Deep Work ToDos</span>
       <div class="xp-title-controls">
-        <button title="Close" onclick="alert('Use the backup buttons below to save your data!')">X</button>
+        <button class="theme-toggle" id="themeToggleBtn">Mode</button>
       </div>
     </div>
 
     <div class="xp-body">
       <!-- Date Selection & Input Panel -->
       <fieldset class="fieldset-box">
-        <legend>Date Selection</legend>
+        <legend>Schedule Index</legend>
         <div class="date-picker-row">
-          <label for="taskDate">Select Day:</label>
+          <label for="taskDate">Target Day:</label>
           <input type="date" id="taskDate" />
           <button class="xp-btn" id="todayBtn">Today</button>
         </div>
       </fieldset>
 
       <fieldset class="fieldset-box">
-        <legend>Add New Task</legend>
+        <legend>New Entry</legend>
         <div class="add-task-row">
-          <input type="text" id="taskInput" placeholder="Type a task here..." />
-          <button class="xp-btn" id="addTaskBtn">Add Task</button>
+          <input type="text" id="taskInput" placeholder="Record a new task..." />
+          <button class="xp-btn" id="addTaskBtn">Commit</button>
         </div>
       </fieldset>
 
       <!-- Task List Area -->
       <fieldset class="fieldset-box">
-        <legend id="listLegend">Tasks</legend>
+        <legend id="listLegend">Collection</legend>
         <ul class="task-list" id="taskList">
           <!-- Tasks dynamically rendered here -->
         </ul>
@@ -255,15 +366,15 @@
 
       <!-- Backup / Restore Footer -->
       <div class="xp-footer">
-        <button class="xp-btn" id="backupBtn">💾 Create Backup (.txt)</button>
-        <button class="xp-btn" id="restoreBtn">📂 Load Backup (.txt)</button>
+        <button class="xp-btn" id="backupBtn">Export Archive (.txt)</button>
+        <button class="xp-btn" id="restoreBtn">Import Archive (.txt)</button>
         <input type="file" id="fileInput" accept=".txt" />
       </div>
     </div>
   </div>
 
   <script>
-    const STORAGE_KEY = "xp_todos_db";
+    const STORAGE_KEY = "artcraft_todos_db";
 
     // DOM Elements
     const taskDateInput = document.getElementById("taskDate");
@@ -275,10 +386,26 @@
     const backupBtn = document.getElementById("backupBtn");
     const restoreBtn = document.getElementById("restoreBtn");
     const fileInput = document.getElementById("fileInput");
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
 
     let db = {};
 
+    function initTheme() {
+      const savedTheme = localStorage.getItem("artcraft_todos_theme") || "dark";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      themeToggleBtn.innerHTML = savedTheme === "dark" ? "☀️ Light" : "🌙 Dark";
+    }
+
+    themeToggleBtn.addEventListener("click", () => {
+      const currentTheme = document.documentElement.getAttribute("data-theme");
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", newTheme);
+      localStorage.setItem("artcraft_todos_theme", newTheme);
+      themeToggleBtn.innerHTML = newTheme === "dark" ? "☀️ Light" : "🌙 Dark";
+    });
+
     function init() {
+      initTheme();
       loadDB();
       setToday();
       
@@ -317,18 +444,18 @@
 
     function renderTasks() {
       const selectedDate = taskDateInput.value;
-      listLegend.innerText = `Tasks for ${selectedDate || "Selected Day"}`;
+      listLegend.innerText = `Tasks — ${selectedDate || "Selected Day"}`;
       taskList.innerHTML = "";
 
       if (!selectedDate) {
-        taskList.innerHTML = `<li class="empty-state">Please select a valid date.</li>`;
+        taskList.innerHTML = `<li class="empty-state">Please specify a target date.</li>`;
         return;
       }
 
       const tasks = db[selectedDate] || [];
 
       if (tasks.length === 0) {
-        taskList.innerHTML = `<li class="empty-state">No tasks recorded for this day.</li>`;
+        taskList.innerHTML = `<li class="empty-state">No entries recorded for this schedule.</li>`;
         return;
       }
 
@@ -345,7 +472,10 @@
         checkbox.addEventListener("change", () => toggleTask(selectedDate, index));
 
         const span = document.createElement("span");
+        span.className = "task-text";
         span.textContent = task.text;
+        span.title = "Click to edit task";
+        span.addEventListener("click", () => enableEditTask(selectedDate, index, leftDiv, span));
 
         leftDiv.appendChild(checkbox);
         leftDiv.appendChild(span);
@@ -353,7 +483,7 @@
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "btn-delete";
         deleteBtn.innerHTML = "&times;";
-        deleteBtn.title = "Delete Task";
+        deleteBtn.title = "Delete Entry";
         deleteBtn.addEventListener("click", () => deleteTask(selectedDate, index));
 
         li.appendChild(leftDiv);
@@ -362,12 +492,40 @@
       });
     }
 
+    function enableEditTask(date, index, container, spanElement) {
+      if (!db[date] || !db[date][index]) return;
+
+      const editInput = document.createElement("input");
+      editInput.type = "text";
+      editInput.className = "task-edit-input";
+      editInput.value = db[date][index].text;
+
+      const saveEdit = () => {
+        const newText = editInput.value.trim();
+        if (newText) {
+          db[date][index].text = newText;
+          saveDB();
+        }
+        renderTasks();
+      };
+
+      editInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") saveEdit();
+        if (e.key === "Escape") renderTasks();
+      });
+
+      editInput.addEventListener("blur", saveEdit);
+
+      container.replaceChild(editInput, spanElement);
+      editInput.focus();
+    }
+
     function addTask() {
       const selectedDate = taskDateInput.value;
       const text = taskInput.value.trim();
 
       if (!selectedDate) {
-        alert("Please pick a date first!");
+        alert("Please choose a date first!");
         return;
       }
 
@@ -414,7 +572,7 @@
       
       const a = document.createElement("a");
       a.href = url;
-      a.download = `todo-backup-${new Date().toISOString().split("T")[0]}.txt`;
+      a.download = `atelier-todo-archive-${new Date().toISOString().split("T")[0]}.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -433,12 +591,12 @@
             db = importedData;
             saveDB();
             renderTasks();
-            alert("Backup successfully loaded into Local Storage!");
+            alert("Archive successfully imported into local storage!");
           } else {
             throw new Error("Invalid format");
           }
         } catch (err) {
-          alert("Error loading file: Please ensure it is a valid backup .txt file.");
+          alert("Error loading file: Please ensure it is a valid backup archive .txt file.");
         }
       };
       reader.readAsText(file);
